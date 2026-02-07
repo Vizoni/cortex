@@ -1,0 +1,11 @@
+node_modules
+dist
+build
+coverage
+.next
+.vercel
+public
+*.config.js
+*.config.ts
+*.config.mjs
+vite.config.ts
