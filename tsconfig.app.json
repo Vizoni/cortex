@@ -29,7 +29,10 @@
     "paths": {
       "ui/*": ["src/ui/*"],
       "components/*": ["src/components/*"],
-      "routes/*": ["src/routes/*"]
+      "routes/*": ["src/routes/*"],
+      "hooks/*": ["src/hooks/*"],
+      "contexts/*": ["src/contexts/*"],
+      "types/*": ["src/types/*"]
     }
   },
   "include": ["src"]
