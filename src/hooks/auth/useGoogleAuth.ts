@@ -81,7 +81,6 @@ export const useGoogleAuth = (): UseGoogleAuthReturn => {
     // Limpa tokens do localStorage
     localStorage.removeItem('auth_tokens')
     localStorage.removeItem('auth_user')
-    localStorage.removeItem('isAuthenticated')
   }
 
   const refreshToken = async (): Promise<AuthTokens> => {

@@ -10,6 +10,13 @@ import { useGoogleAuth } from 'hooks/auth/useGoogleAuth'
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
+// Helper: valida se o token ainda é válido
+const isTokenValid = (tokens: AuthTokens | null): boolean => {
+  if (!tokens || !tokens.accessToken) return false
+  if (!tokens.expiresAt) return true // Se não tem expiração, considera válido
+  return Date.now() < tokens.expiresAt
+}
+
 export const useAuth = () => {
   const context = useContext(AuthContext)
   if (!context) {
@@ -31,19 +38,26 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     const storedTokens = localStorage.getItem('auth_tokens')
 
     if (storedUser && storedTokens) {
-      setUser(JSON.parse(storedUser))
-      setTokens(JSON.parse(storedTokens))
+      const parsedTokens = JSON.parse(storedTokens)
+      
+      // Valida se o token ainda é válido
+      if (isTokenValid(parsedTokens)) {
+        setUser(JSON.parse(storedUser))
+        setTokens(parsedTokens)
+      } else {
+        // Token expirado, limpa tudo
+        localStorage.removeItem('auth_user')
+        localStorage.removeItem('auth_tokens')
+      }
     }
 
     setIsLoading(false)
   }, [])
 
-  // Salva estado no localStorage quando mudar
   useEffect(() => {
     if (user && tokens) {
       localStorage.setItem('auth_user', JSON.stringify(user))
       localStorage.setItem('auth_tokens', JSON.stringify(tokens))
-      localStorage.setItem('isAuthenticated', 'true')
     }
   }, [user, tokens])
 
@@ -84,7 +98,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       setTokens(null)
       localStorage.removeItem('auth_user')
       localStorage.removeItem('auth_tokens')
-      localStorage.removeItem('isAuthenticated')
     }
   }
 
@@ -146,7 +159,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const value: AuthContextType = {
     user,
     tokens,
-    isAuthenticated: !!user && !!tokens,
+    isAuthenticated: !!user && !!tokens && isTokenValid(tokens),
     isLoading,
     login,
     logout,
