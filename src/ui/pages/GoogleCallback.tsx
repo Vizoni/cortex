@@ -20,7 +20,7 @@ export const GoogleCallback = () => {
     if (code) {
       handleAuthCallback('google', code)
         .then(() => {
-          navigate('/home')
+          navigate('/app/home')
         })
         .catch((err: Error) => {
           console.error('Erro ao processar callback:', err)

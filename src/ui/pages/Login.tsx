@@ -1,7 +1,16 @@
+import { useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useAuth } from 'contexts/AuthContext'
 
 export const Login = () => {
-  const { login, isLoading } = useAuth()
+  const { login, isLoading, isAuthenticated } = useAuth()
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/app/home', { replace: true })
+    }
+  }, [isAuthenticated, navigate])
 
   const handleGoogleLogin = async () => {
     try {

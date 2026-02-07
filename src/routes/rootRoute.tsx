@@ -1,6 +1,7 @@
 import { lazy, Suspense } from 'react'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import { PrivateRoute } from 'routes/PrivateRoute'
+import { AppLayout } from 'ui/layouts/AppLayout'
 
 const Landing = lazy(() => import('ui/pages/Landing').then(module => ({ default: module.Landing })))
 const Login = lazy(() => import('ui/pages/Login').then(module => ({ default: module.Login })))
@@ -37,16 +38,6 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: '/home',
-    element: (
-      <Suspense fallback={<LoadingPage />}>
-        <PrivateRoute>
-          <Home />
-        </PrivateRoute>
-      </Suspense>
-    ),
-  },
-  {
     path: '/auth/callback/google',
     element: (
       <Suspense fallback={<LoadingPage />}>
@@ -59,6 +50,18 @@ const router = createBrowserRouter([
     element: (
       <Suspense fallback={<LoadingPage />}>
         <NotFound />
+      </Suspense>
+    ),
+  },  // Rotas privadas do app (requerem autenticação)
+  {
+    path: '/app/home',
+    element: (
+      <Suspense fallback={<LoadingPage />}>
+        <PrivateRoute>
+          <AppLayout>
+            <Home />
+          </AppLayout>
+        </PrivateRoute>
       </Suspense>
     ),
   },
