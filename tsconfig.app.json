@@ -32,7 +32,8 @@
       "routes/*": ["src/routes/*"],
       "hooks/*": ["src/hooks/*"],
       "contexts/*": ["src/contexts/*"],
-      "types/*": ["src/types/*"]
+      "types/*": ["src/types/*"],
+      "api/*": ["src/api/*"]
     }
   },
   "include": ["src"]

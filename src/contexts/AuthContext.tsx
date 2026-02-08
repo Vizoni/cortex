@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect } from 'react'
+import { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react'
 import type { 
   AuthContextType, 
   SocialProvider, 
@@ -30,7 +30,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [tokens, setTokens] = useState<AuthTokens | null>(null)
   const [isLoading, setIsLoading] = useState(true)
 
-  const googleAuth = useGoogleAuth()
+  const googleAuth = useMemo(() => useGoogleAuth(), [])
 
   // Carrega estado da autenticação do localStorage
   useEffect(() => {
@@ -127,7 +127,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   }
 
   // Função auxiliar para ser chamada no callback após OAuth redirect
-  const handleAuthCallback = async (provider: SocialProvider, code: string): Promise<void> => {
+  // Memoizada com useCallback para evitar recriações e re-renders
+  const handleAuthCallback = useCallback(async (provider: SocialProvider, code: string): Promise<void> => {
     setIsLoading(true)
     try {
       let result: { user: User; tokens: AuthTokens }
@@ -154,7 +155,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [googleAuth])
 
   const value: AuthContextType = {
     user,

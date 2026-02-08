@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useAuth } from 'contexts/AuthContext'
 
@@ -6,8 +6,12 @@ export const GoogleCallback = () => {
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
   const { handleAuthCallback } = useAuth() as any
+  const hasProcessed = useRef(false)
 
   useEffect(() => {
+    // Previne múltiplas execuções
+    if (hasProcessed.current) return
+
     const code = searchParams.get('code')
     const error = searchParams.get('error')
 
@@ -18,12 +22,14 @@ export const GoogleCallback = () => {
     }
 
     if (code) {
+      hasProcessed.current = true
       handleAuthCallback('google', code)
         .then(() => {
           navigate('/app/home')
         })
         .catch((err: Error) => {
           console.error('Erro ao processar callback:', err)
+          hasProcessed.current = false // Permite retry em caso de erro
           navigate('/login')
         })
     }
